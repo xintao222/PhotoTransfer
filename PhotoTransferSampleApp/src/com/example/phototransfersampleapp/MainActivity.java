@@ -24,11 +24,11 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		Kii.initialize("6edfd292", "d78eeaf8094de37549dda707e8d1e891", Site.US);
+		Kii.initialize("4cb6fa00", "c48ff2c856c603773b95434c9deeb993", Site.US);
 		
 //		KiiUser user = KiiUser.builderWithName("fujisan").build();
 //		try {
-//            user.register(callback, "password");
+//            user.register(userCallback, "password");
 //        } catch (Exception e) {
 //            showToast("Error : " + e.getLocalizedMessage());
 //        }
@@ -48,23 +48,27 @@ public class MainActivity extends Activity {
 	}
 	
     KiiUserCallBack userCallback = new KiiUserCallBack() {
-//        @Override
-//        public void onRegisterCompleted(int token, KiiUser user, Exception e) {
-//            if (e == null) {
-//                showToast("User registered!");
-//            } else {
-//                showToast("Error : " + e.getLocalizedMessage());
-//            }
-//        }
+        @Override
+        public void onRegisterCompleted(int token, KiiUser user, Exception e) {
+            if (e == null) {
+                showToast("User registered!");
+                createObject(user);
+            } else {
+                showToast("Error : " + e.getLocalizedMessage());
+            }
+        }
         
         @Override
         public void onLoginCompleted(int token, KiiUser user, Exception e) {
-            if (e != null) {
+            if (e == null) {
+                showToast("User logged-in!");
+                createObject(user);
+            } else {
                 showToast("Error : " + e.getLocalizedMessage());
             }
-            
-            showToast("User logged-in!");
-            
+        }
+        
+        private void createObject(KiiUser user) {
             KiiBucket bucket = user.bucket("bucket");
             object = bucket.object();
             object.set("foo", "bar");
@@ -80,10 +84,10 @@ public class MainActivity extends Activity {
     KiiObjectCallBack objectCallback = new KiiObjectCallBack() {
     	@Override
     	public void onSaveCompleted(int token, KiiObject object, Exception exception) {
-            if (exception != null) {
-                showToast("Error : " + exception.getLocalizedMessage());
-            } else {
+            if (exception == null) {
             	showToast("Object saved!");
+            } else {
+                showToast("Error : " + exception.getLocalizedMessage());
             }
     	};
     };
